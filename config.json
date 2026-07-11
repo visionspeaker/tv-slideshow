@@ -1,0 +1,69 @@
+{
+  "_설명": "이 파일만 수정해서 GitHub에 올리면 10분 안에 TV에 자동 반영됩니다.",
+  "_type종류": "image(이미지) / url(웹페이지) / black(검은화면)",
+  "_days": "0=일 1=월 2=화 3=수 4=목 5=금 6=토, 생략하면 매일",
+  "_fit": "contain=비율유지 전체표시, cover=화면 꽉 채움",
+  "defaultDuration": 15,
+  "fit": "contain",
+  "pixelShift": true,
+  "clock": true,
+  "schedules": [
+    {
+      "name": "평일 업무시간",
+      "days": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "start": "07:00",
+      "end": "18:00",
+      "slides": [
+        {
+          "type": "image",
+          "src": "sample1.svg",
+          "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "sample2.svg",
+          "duration": 15
+        }
+      ]
+    },
+    {
+      "name": "저녁 시간",
+      "start": "18:00",
+      "end": "22:00",
+      "dim": 0.35,
+      "slides": [
+        {
+          "type": "image",
+          "src": "sample1.svg",
+          "duration": 30
+        }
+      ]
+    },
+    {
+      "name": "심야 절전",
+      "start": "22:00",
+      "end": "07:00",
+      "slides": [
+        {
+          "type": "black",
+          "duration": 600
+        }
+      ]
+    }
+  ],
+  "default": {
+    "slides": [
+      {
+        "type": "image",
+        "src": "sample1.svg",
+        "duration": 20
+      }
+    ]
+  }
+}

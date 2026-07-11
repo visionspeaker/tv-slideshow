@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#6e2c1e"/><stop offset="1" stop-color="#c88750"/>
+  </linearGradient></defs>
+  <rect width="1920" height="1080" fill="url(#g)"/>
+  <text x="960" y="520" font-family="sans-serif" font-size="110" font-weight="700" fill="#fff" text-anchor="middle">샘플 슬라이드 2</text>
+  <text x="960" y="640" font-family="sans-serif" font-size="40" fill="#dce6f2" text-anchor="middle">관리자 페이지에서 실제 이미지를 업로드하세요</text>
+</svg>

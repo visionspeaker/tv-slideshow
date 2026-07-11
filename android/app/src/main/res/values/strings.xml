@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">한양전공 TV 슬라이드</string>
+
+    <!-- ★ 여기만 수정: GitHub Pages 주소로 변경하세요 -->
+    <!-- 예: https://아이디.github.io/tv-slideshow/ -->
+    <string name="slideshow_url">https://YOUR_GITHUB_ID.github.io/tv-slideshow/</string>
+</resources>

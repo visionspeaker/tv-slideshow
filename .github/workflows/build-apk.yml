@@ -1,0 +1,39 @@
+name: APK build
+
+on:
+  push:
+    paths: ['android/**', '.github/workflows/**']
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Inject Pages URL
+        run: |
+          OWNER_LC=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          URL="https://${OWNER_LC}.github.io/${{ github.event.repository.name }}/"
+          sed -i "s|https://YOUR_GITHUB_ID.github.io/tv-slideshow/|${URL}|" \
+            android/app/src/main/res/values/strings.xml
+          echo "Injected URL: ${URL}"
+
+      - uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.7'
+
+      - name: Build APK
+        working-directory: android
+        run: gradle assembleDebug
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tv-slideshow-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 90

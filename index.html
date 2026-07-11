@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>한양전공 TV 슬라이드</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    width: 100%; height: 100%;
+    background: #000; overflow: hidden;
+    font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+    cursor: none;
+  }
+
+  /* 픽셀 시프트용 래퍼: 살짝 확대해 두어 이동 시 검은 테두리가 보이지 않게 함 */
+  #stage {
+    position: absolute; inset: 0;
+    transform: scale(1.012);
+    transition: translate 2s ease-in-out;
+  }
+
+  .slide {
+    position: absolute; inset: 0;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+  }
+  .slide.active { opacity: 1; }
+  .slide img {
+    width: 100%; height: 100%;
+    object-fit: contain; /* config에서 cover로 변경 가능 */
+    display: block;
+  }
+  .slide iframe {
+    width: 100%; height: 100%;
+    border: 0; background: #fff;
+  }
+  .slide.black { background: #000; }
+
+  /* 야간 감광 오버레이 */
+  #dimmer {
+    position: absolute; inset: 0;
+    background: #000; opacity: 0;
+    transition: opacity 3s ease;
+    pointer-events: none; z-index: 50;
+  }
+
+  /* 시계 오버레이 */
+  #clock {
+    position: absolute; right: 3vw; bottom: 3vh;
+    z-index: 60; text-align: right;
+    color: rgba(255,255,255,.85);
+    text-shadow: 0 2px 8px rgba(0,0,0,.7);
+    /* 번인 방지: 시계도 주기적으로 위치 이동 */
+    transition: right 2s ease, bottom 2s ease, left 2s ease, top 2s ease;
+  }
+  #clock .time { font-size: 4.5vw; font-weight: 700; letter-spacing: .02em; }
+  #clock .date { font-size: 1.6vw; opacity: .8; margin-top: .2em; }
+
+  /* 상태/오류 표시 */
+  #status {
+    position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 70; color: #888; font-size: 1.8vw;
+    text-align: center; display: none;
+  }
+</style>
+</head>
+<body>
+  <div id="stage"></div>
+  <div id="dimmer"></div>
+  <div id="clock"><div class="time"></div><div class="date"></div></div>
+  <div id="status">config.json을 불러오는 중…</div>
+
+<script>
+/* ================================================================
+   한양전공 TV 슬라이드 엔진
+   - config.json 을 주기적으로 다시 읽어 자동 최신화
+   - 시간대별 스케줄 → 슬라이드(이미지/URL/블랙) 순환
+   - 번인 방지: 픽셀 시프트 + 시계 위치 이동 + 야간 감광
+   ================================================================ */
+
+const stage  = document.getElementById('stage');
+const dimmer = document.getElementById('dimmer');
+const clockEl = document.getElementById('clock');
+const statusEl = document.getElementById('status');
+
+let config = null;
+let playlist = [];        // 현재 활성 스케줄의 슬라이드 목록
+let currentDim = 0;
+let slideIndex = -1;
+let slideTimer = null;
+let activeEl = null;
+
+/* ---------- config 로드 (캐시 무시) ---------- */
+async function loadConfig() {
+  try {
+    const res = await fetch('config.json?t=' + Date.now(), { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    config = await res.json();
+    statusEl.style.display = 'none';
+    applySchedule(true);
+  } catch (e) {
+    console.error('config 로드 실패:', e);
+    if (!config) {
+      statusEl.textContent = 'config.json 로드 실패 — 네트워크 확인 필요';
+      statusEl.style.display = 'block';
+    }
+    // 기존 config가 있으면 그대로 유지
+  }
+}
+
+/* ---------- 현재 시간에 맞는 스케줄 찾기 ---------- */
+function nowHM() {
+  const d = new Date();
+  return { day: d.getDay(), hm: d.getHours() * 60 + d.getMinutes() };
+}
+function toMin(s) { const [h, m] = s.split(':').map(Number); return h * 60 + m; }
+
+function matchSchedule() {
+  if (!config || !config.schedules) return null;
+  const { day, hm } = nowHM();
+  for (const sc of config.schedules) {
+    if (sc.days && !sc.days.includes(day)) continue;
+    const s = toMin(sc.start), e = toMin(sc.end);
+    const inRange = s <= e ? (hm >= s && hm < e)         // 일반 구간
+                           : (hm >= s || hm < e);        // 자정 넘는 구간 (예: 22:00~07:00)
+    if (inRange) return sc;
+  }
+  return config.default || null;
+}
+
+/* ---------- 스케줄 적용 ---------- */
+function applySchedule(force) {
+  const sc = matchSchedule();
+  const newList = sc ? (sc.slides || []) : [];
+  const newDim = sc && sc.dim ? sc.dim : 0;
+
+  const changed = JSON.stringify(newList) !== JSON.stringify(playlist) || newDim !== currentDim;
+  if (!changed && !force) return;
+
+  playlist = newList;
+  currentDim = newDim;
+  dimmer.style.opacity = currentDim;
+
+  slideIndex = -1;
+  if (slideTimer) clearTimeout(slideTimer);
+  nextSlide();
+}
+
+/* ---------- 슬라이드 전환 ---------- */
+function nextSlide() {
+  if (!playlist.length) {
+    // 슬라이드 없음 → 블랙 화면
+    showElement(makeBlack());
+    slideTimer = setTimeout(nextSlide, 60000);
+    return;
+  }
+  slideIndex = (slideIndex + 1) % playlist.length;
+  const slide = playlist[slideIndex];
+  const dur = (slide.duration || config.defaultDuration || 15) * 1000;
+
+  let el;
+  if (slide.type === 'image') el = makeImage(slide);
+  else if (slide.type === 'url') el = makeFrame(slide);
+  else el = makeBlack();
+
+  showElement(el);
+  slideTimer = setTimeout(nextSlide, dur);
+}
+
+function makeImage(slide) {
+  const div = document.createElement('div');
+  div.className = 'slide';
+  const img = document.createElement('img');
+  if (slide.fit) img.style.objectFit = slide.fit;
+  else if (config.fit) img.style.objectFit = config.fit;
+  img.onerror = () => { console.warn('이미지 로드 실패:', slide.src); div.classList.add('black'); img.remove(); };
+  img.src = slide.src + (slide.src.startsWith('http') ? '' : '?t=' + Math.floor(Date.now() / 600000)); // 10분 캐시버스터
+  div.appendChild(img);
+  return div;
+}
+
+function makeFrame(slide) {
+  const div = document.createElement('div');
+  div.className = 'slide';
+  const f = document.createElement('iframe');
+  f.src = slide.src;
+  f.setAttribute('scrolling', 'no');
+  div.appendChild(f);
+  return div;
+}
+
+function makeBlack() {
+  const div = document.createElement('div');
+  div.className = 'slide black';
+  return div;
+}
+
+function showElement(el) {
+  stage.appendChild(el);
+  requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('active')));
+  const prev = activeEl;
+  activeEl = el;
+  if (prev) {
+    prev.classList.remove('active');
+    setTimeout(() => prev.remove(), 1500); // 페이드 아웃 후 제거
+  }
+}
+
+/* ---------- 번인 방지: 픽셀 시프트 ---------- */
+function pixelShift() {
+  if (config && config.pixelShift === false) return;
+  const x = (Math.random() * 16 - 8).toFixed(1);
+  const y = (Math.random() * 16 - 8).toFixed(1);
+  stage.style.translate = `${x}px ${y}px`;
+}
+
+/* ---------- 시계 ---------- */
+const CLOCK_POS = [
+  { right: '3vw', bottom: '3vh', left: 'auto', top: 'auto' },
+  { left: '3vw', bottom: '3vh', right: 'auto', top: 'auto' },
+  { right: '3vw', top: '3vh', left: 'auto', bottom: 'auto' },
+  { left: '3vw', top: '3vh', right: 'auto', bottom: 'auto' },
+];
+let clockPosIdx = 0;
+
+function updateClock() {
+  if (config && config.clock === false) { clockEl.style.display = 'none'; return; }
+  clockEl.style.display = 'block';
+  const d = new Date();
+  const days = ['일', '월', '화', '수', '목', '금', '토'];
+  clockEl.querySelector('.time').textContent =
+    String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+  clockEl.querySelector('.date').textContent =
+    `${d.getMonth() + 1}월 ${d.getDate()}일 (${days[d.getDay()]})`;
+}
+
+function moveClock() {
+  clockPosIdx = (clockPosIdx + 1) % CLOCK_POS.length;
+  Object.assign(clockEl.style, CLOCK_POS[clockPosIdx]);
+}
+
+/* ---------- 타이머 구동 ---------- */
+loadConfig();
+setInterval(loadConfig, 10 * 60 * 1000);   // 10분마다 config 다시 읽기 (자동 최신화)
+setInterval(() => applySchedule(false), 30 * 1000); // 30초마다 시간대 변경 감지
+setInterval(pixelShift, 60 * 1000);        // 1분마다 픽셀 시프트
+setInterval(updateClock, 1000);
+setInterval(moveClock, 10 * 60 * 1000);    // 10분마다 시계 위치 이동
+updateClock();
+
+/* 새벽 4시대에 페이지 전체 리로드 → 메모리 누수/멈춤 예방 */
+setInterval(() => {
+  const d = new Date();
+  if (d.getHours() === 4 && d.getMinutes() === 0) location.reload();
+}, 60 * 1000);
+</script>
+</body>
+</html>
