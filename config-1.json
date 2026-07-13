@@ -18,7 +18,7 @@
         5
       ],
       "start": "07:00",
-      "end": "18:00",
+      "end": "17:50",
       "slides": [
         {
           "type": "image",
@@ -64,23 +64,33 @@
     },
     {
       "name": "저녁 시간",
-      "start": "18:00",
+      "start": "17:50",
       "end": "22:00",
       "dim": 0.35,
       "slides": [
         {
           "type": "image",
-          "src": "images/나불육상태양광.png",
+          "src": "images/퇴근시간1.png",
           "duration": 30
         },
         {
           "type": "image",
-          "src": "images/수상태양광.png",
+          "src": "images/퇴근시간2.png",
           "duration": 15
         },
         {
           "type": "image",
-          "src": "images/연도별납품실적.png",
+          "src": "images/퇴근시간3.png",
+          "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/퇴근시간4.jpeg",
+          "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/퇴근시간5.jpeg",
           "duration": 15
         }
       ]
