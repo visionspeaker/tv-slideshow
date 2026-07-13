@@ -32,6 +32,15 @@
   .msg { font-size:13px; margin-top:8px; }
   .msg.ok { color:var(--green); } .msg.err { color:var(--red); }
 
+  #lockScreen { position:fixed; inset:0; background:var(--navy); display:flex; align-items:center; justify-content:center; z-index:100; }
+  #lockBox { background:#fff; border-radius:14px; padding:32px 28px; width:340px; text-align:center; box-shadow:0 12px 40px rgba(0,0,0,.3); }
+  #lockBox .logo { font-size:34px; }
+  #lockBox h1 { font-size:18px; color:var(--navy); margin:10px 0 4px; }
+  #lockBox p { font-size:12px; color:var(--sub); margin-bottom:18px; }
+  #lockBox input { text-align:center; font-size:16px; letter-spacing:.05em; }
+  #lockBox button { width:100%; margin-top:14px; padding:12px; font-size:15px; }
+  #lockMsg { font-size:13px; margin-top:10px; min-height:18px; }
+
   .sched { border:1px solid var(--line); border-radius:8px; padding:12px; margin-bottom:12px; background:#fafbfd; }
   .sched-head { display:flex; gap:8px; flex-wrap:wrap; align-items:flex-end; margin-bottom:8px; }
   .sched-head > div { flex:1; min-width:90px; }
@@ -55,36 +64,50 @@
   #saveMsg { align-self:center; font-size:13px; }
   .hidden { display:none; }
   .hint { font-size:12px; color:var(--sub); line-height:1.6; }
+  details.setup summary { cursor:pointer; font-size:13px; color:var(--sub); }
+  .codebox { width:100%; font-family:monospace; font-size:11px; height:64px; border:1px solid var(--line); border-radius:6px; padding:8px; margin-top:6px; word-break:break-all; }
 </style>
 </head>
 <body>
-<header>
-  <h1>📺 TV 슬라이드 관리자</h1>
-  <div class="status" id="connStatus">미연결</div>
-</header>
-<main>
 
-  <div class="card" id="setupCard">
-    <h2>연결 설정 (최초 1회)</h2>
-    <label>GitHub 아이디</label>
-    <input type="text" id="inOwner" placeholder="예: hanyang-jk">
-    <label>저장소 이름</label>
-    <input type="text" id="inRepo" value="tv-slideshow">
-    <label>GitHub 토큰 (Personal Access Token)</label>
-    <input type="password" id="inToken" placeholder="ghp_ 로 시작하는 토큰">
-    <p class="hint" style="margin-top:8px">
-      토큰 발급: GitHub → Settings → Developer settings → Personal access tokens →
-      <b>Fine-grained tokens → Generate new token</b> → Repository access에서 tv-slideshow만 선택 →
-      Permissions에서 <b>Contents: Read and write</b> 부여 → 생성된 토큰 복사.<br>
-      토큰은 이 브라우저에만 저장되며 외부로 전송되지 않습니다.
-    </p>
-    <div class="row" style="margin-top:12px">
-      <button class="btn-navy" onclick="connect()">연결하기</button>
-    </div>
-    <div class="msg" id="setupMsg"></div>
+<div id="lockScreen">
+  <div id="lockBox">
+    <div class="logo">📺</div>
+    <h1>TV 슬라이드 관리자</h1>
+    <p>공용 비밀번호를 입력하세요</p>
+    <input type="password" id="lockPw" placeholder="비밀번호" autocomplete="off">
+    <button class="btn-navy" onclick="unlock()">잠금 해제</button>
+    <div id="lockMsg"></div>
+    <details class="setup" style="margin-top:20px; text-align:left">
+      <summary>최초 설정 (관리자 전용)</summary>
+      <div style="margin-top:12px">
+        <p class="hint">토큰과 공용 비밀번호를 입력하면, 토큰이 암호화되어 저장소에 저장됩니다. 이 작업은 최초 1회만 필요합니다.</p>
+        <label>GitHub 아이디</label>
+        <input type="text" id="setOwner" value="visionspeaker">
+        <label>저장소 이름</label>
+        <input type="text" id="setRepo" value="tv-slideshow">
+        <label>GitHub 토큰 (github_pat_... 또는 ghp_...)</label>
+        <input type="password" id="setToken" placeholder="새로 발급한 토큰">
+        <label>설정할 공용 비밀번호</label>
+        <input type="password" id="setPw" placeholder="직원들에게 공유할 비밀번호">
+        <button class="btn-navy btn-sm" style="margin-top:12px" onclick="generateConfig()">암호화 설정 만들기</button>
+        <div class="msg" id="setupMsg"></div>
+        <div id="setupResult" class="hidden">
+          <p class="hint" style="margin-top:12px"><b>자동 저장에 실패한 경우에만</b>, 아래 내용을 저장소의 <code>admin-config.json</code> 파일로 직접 저장하세요.</p>
+          <textarea class="codebox" id="configOut" readonly></textarea>
+        </div>
+      </div>
+    </details>
   </div>
+</div>
 
-  <div class="card hidden" id="imgCard">
+<header class="hidden" id="appHeader">
+  <h1>📺 TV 슬라이드 관리자</h1>
+  <div class="status" id="connStatus"></div>
+</header>
+<main class="hidden" id="appMain">
+
+  <div class="card" id="imgCard">
     <h2>이미지 관리</h2>
     <div class="row">
       <input type="file" id="fileInput" accept="image/*" multiple>
@@ -94,7 +117,7 @@
     <div class="imgs" id="imgGrid" style="margin-top:12px"></div>
   </div>
 
-  <div class="card hidden" id="optCard">
+  <div class="card" id="optCard">
     <h2>기본 설정</h2>
     <div class="row">
       <div><label>기본 표시시간(초)</label><input type="number" id="optDur" min="3" value="15"></div>
@@ -107,7 +130,7 @@
     </div>
   </div>
 
-  <div class="card hidden" id="schedCard">
+  <div class="card" id="schedCard">
     <h2>시간대별 스케줄</h2>
     <div id="schedList"></div>
     <button class="btn-line" onclick="addSchedule()">+ 시간대 추가</button>
@@ -125,11 +148,108 @@
 </div>
 
 <script>
+const enc = new TextEncoder();
+const dec = new TextDecoder();
+
+async function deriveKey(password, salt) {
+  const base = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt, iterations: 150000, hash: 'SHA-256' },
+    base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']
+  );
+}
+function b64(buf) { return btoa(String.fromCharCode(...new Uint8Array(buf))); }
+function unb64(str) { return Uint8Array.from(atob(str), c => c.charCodeAt(0)); }
+
+async function encryptToken(token, password) {
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const key = await deriveKey(password, salt);
+  const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode(token));
+  return { salt: b64(salt), iv: b64(iv), ct: b64(ct) };
+}
+async function decryptToken(payload, password) {
+  const key = await deriveKey(password, unb64(payload.salt));
+  const pt = await crypto.subtle.decrypt(
+    { name: 'AES-GCM', iv: unb64(payload.iv) }, key, unb64(payload.ct)
+  );
+  return dec.decode(pt);
+}
+
+async function generateConfig() {
+  const owner = document.getElementById('setOwner').value.trim();
+  const repo = document.getElementById('setRepo').value.trim();
+  const token = document.getElementById('setToken').value.trim();
+  const pw = document.getElementById('setPw').value;
+  const msg = document.getElementById('setupMsg');
+  if (!token || !pw) { msg.className='msg err'; msg.textContent='토큰과 비밀번호를 모두 입력하세요'; return; }
+  if (pw.length < 6) { msg.className='msg err'; msg.textContent='비밀번호는 6자 이상을 권장합니다'; return; }
+  msg.className='msg'; msg.textContent='암호화 중…';
+  try {
+    const encrypted = await encryptToken(token, pw);
+    const config = { owner, repo, enc: encrypted };
+    document.getElementById('configOut').value = JSON.stringify(config, null, 2);
+    document.getElementById('setupResult').classList.remove('hidden');
+    try {
+      await putFile(owner, repo, token, 'admin-config.json', JSON.stringify(config, null, 2), '공유용 암호화 설정 저장');
+      msg.className='msg ok';
+      msg.textContent='✓ 저장 완료! 이제 직원들이 공용 비밀번호로 접속할 수 있습니다.';
+    } catch (e) {
+      msg.className='msg err';
+      msg.textContent='암호문은 생성됐지만 자동 저장 실패: ' + e.message + ' — 아래 내용을 직접 저장하세요.';
+    }
+  } catch (e) {
+    msg.className='msg err'; msg.textContent='✗ ' + e.message;
+  }
+}
+
+async function putFile(owner, repo, token, path, content, message) {
+  let sha;
+  try {
+    const g = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}?t=${Date.now()}`,
+      { headers: { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json' } });
+    if (g.ok) sha = (await g.json()).sha;
+  } catch {}
+  const body = { message, content: btoa(unescape(encodeURIComponent(content))) };
+  if (sha) body.sha = sha;
+  const r = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+    method: 'PUT', headers: { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  if (!r.ok) throw new Error('저장 실패 (' + r.status + ')');
+  return r.json();
+}
+
 let owner='', repo='', token='';
 let config = null, configSha = null;
 let imageList = [];
 
-const LS = localStorage;
+async function unlock() {
+  const pw = document.getElementById('lockPw').value;
+  const msg = document.getElementById('lockMsg');
+  if (!pw) { msg.className='msg err'; msg.style.color='var(--red)'; msg.textContent='비밀번호를 입력하세요'; return; }
+  msg.className='msg'; msg.style.color='var(--sub)'; msg.textContent='확인 중…';
+  try {
+    const res = await fetch('admin-config.json?t=' + Date.now(), { cache: 'no-store' });
+    if (!res.ok) throw new Error('설정 파일 없음 — 관리자가 최초 설정을 먼저 해야 합니다');
+    const cfg = await res.json();
+    owner = cfg.owner; repo = cfg.repo;
+    token = await decryptToken(cfg.enc, pw);
+    const f = await ghGet('config.json');
+    config = JSON.parse(fromB64(f.content));
+    configSha = f.sha;
+    document.getElementById('lockScreen').classList.add('hidden');
+    ['appHeader','appMain','saveBar'].forEach(id => document.getElementById(id).classList.remove('hidden'));
+    document.getElementById('connStatus').textContent = owner + '/' + repo;
+    renderOptions(); renderSchedules(); loadImages();
+    sessionStorage.setItem('tv_unlocked_pw', pw);
+  } catch (e) {
+    msg.className='msg err'; msg.style.color='var(--red)';
+    msg.textContent = /decrypt|operation-specific/i.test(e.message) ? '✗ 비밀번호가 틀렸습니다' : '✗ ' + e.message;
+  }
+}
+
+document.getElementById('lockPw').addEventListener('keydown', e => { if (e.key === 'Enter') unlock(); });
 
 function headers() {
   return { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json' };
@@ -156,28 +276,7 @@ async function ghDelete(path, sha, message) {
   if (!r.ok) throw new Error('삭제 실패 (' + r.status + ')');
 }
 function toB64(str) { return btoa(unescape(encodeURIComponent(str))); }
-function fromB64(b64) { return decodeURIComponent(escape(atob(b64.replace(/\n/g, '')))); }
-
-async function connect() {
-  owner = document.getElementById('inOwner').value.trim();
-  repo  = document.getElementById('inRepo').value.trim();
-  token = document.getElementById('inToken').value.trim();
-  const msg = document.getElementById('setupMsg');
-  msg.className = 'msg'; msg.textContent = '연결 중…';
-  try {
-    const f = await ghGet('config.json');
-    config = JSON.parse(fromB64(f.content));
-    configSha = f.sha;
-    LS.setItem('gh_owner', owner); LS.setItem('gh_repo', repo); LS.setItem('gh_token', token);
-    msg.className = 'msg ok'; msg.textContent = '✓ 연결 성공';
-    document.getElementById('connStatus').textContent = owner + '/' + repo + ' 연결됨';
-    document.getElementById('setupCard').classList.add('hidden');
-    ['imgCard','optCard','schedCard','saveBar'].forEach(id => document.getElementById(id).classList.remove('hidden'));
-    renderOptions(); renderSchedules(); loadImages();
-  } catch (e) {
-    msg.className = 'msg err'; msg.textContent = '✗ ' + e.message + ' — 아이디/저장소/토큰 권한을 확인하세요';
-  }
-}
+function fromB64(s) { return decodeURIComponent(escape(atob(s.replace(/\n/g, '')))); }
 
 async function loadImages() {
   const grid = document.getElementById('imgGrid');
@@ -202,19 +301,19 @@ async function uploadImages() {
   const files = document.getElementById('fileInput').files;
   const msg = document.getElementById('imgMsg');
   if (!files.length) { msg.className='msg err'; msg.textContent='파일을 먼저 선택하세요'; return; }
-  msg.className = 'msg'; 
+  msg.className = 'msg';
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
     msg.textContent = `업로드 중 (${i + 1}/${files.length}) ${file.name}…`;
     const safeName = file.name.replace(/\s+/g, '_');
-    const b64 = await new Promise((res, rej) => {
+    const b64d = await new Promise((res, rej) => {
       const r = new FileReader();
       r.onload = () => res(r.result.split(',')[1]);
       r.onerror = rej;
       r.readAsDataURL(file);
     });
     const existing = imageList.find(f => f.name === safeName);
-    await ghPut('images/' + safeName, b64, '이미지 업로드: ' + safeName, existing ? existing.sha : undefined);
+    await ghPut('images/' + safeName, b64d, '이미지 업로드: ' + safeName, existing ? existing.sha : undefined);
   }
   msg.className = 'msg ok'; msg.textContent = '✓ 업로드 완료';
   document.getElementById('fileInput').value = '';
@@ -374,12 +473,10 @@ async function saveConfig() {
 }
 
 window.addEventListener('load', () => {
-  const o = LS.getItem('gh_owner'), r = LS.getItem('gh_repo'), t = LS.getItem('gh_token');
-  if (o && r && t) {
-    document.getElementById('inOwner').value = o;
-    document.getElementById('inRepo').value = r;
-    document.getElementById('inToken').value = t;
-    connect();
+  const savedPw = sessionStorage.getItem('tv_unlocked_pw');
+  if (savedPw) {
+    document.getElementById('lockPw').value = savedPw;
+    unlock();
   }
 });
 </script>
