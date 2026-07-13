@@ -17,8 +17,8 @@
         4,
         5
       ],
-      "start": "07:00",
-      "end": "18:00",
+      "start": "08:00",
+      "end": "17:50",
       "slides": [
         {
           "type": "image",
@@ -32,15 +32,35 @@
         },
         {
           "type": "image",
-          "src": "images/퇴근시간1.png",
+          "src": "images/납품현장분포.png",
+          "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/발주처비중.png",
+          "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/연도별납품실적.png",
+          "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/지역별실적.png",
+          "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/회사전경드론.png",
           "duration": 15
         }
       ]
     },
     {
       "name": "저녁 시간",
-      "start": "18:00",
-      "end": "22:00",
+      "start": "17:50",
+      "end": "19:00",
       "dim": 0.35,
       "slides": [
         {
@@ -55,15 +75,25 @@
         },
         {
           "type": "image",
-          "src": "images/나불육상태양광.png",
+          "src": "images/퇴근시간3.png",
+          "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/퇴근시간4.jpeg",
+          "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/퇴근시간5.jpeg",
           "duration": 15
         }
       ]
     },
     {
       "name": "심야 절전",
-      "start": "22:00",
-      "end": "07:00",
+      "start": "19:00",
+      "end": "08:00",
       "slides": [
         {
           "type": "black",
