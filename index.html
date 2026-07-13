@@ -12,13 +12,11 @@
     font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
     cursor: none;
   }
-
   #stage {
     position: absolute; inset: 0;
     transform: scale(1.012);
     transition: translate 2s ease-in-out;
   }
-
   .slide {
     position: absolute; inset: 0;
     opacity: 0;
@@ -35,14 +33,12 @@
     border: 0; background: #fff;
   }
   .slide.black { background: #000; }
-
   #dimmer {
     position: absolute; inset: 0;
     background: #000; opacity: 0;
     transition: opacity 3s ease;
     pointer-events: none; z-index: 50;
   }
-
   #clock {
     position: absolute; right: 3vw; bottom: 3vh;
     z-index: 60; text-align: right;
@@ -52,7 +48,6 @@
   }
   #clock .time { font-size: 4.5vw; font-weight: 700; letter-spacing: .02em; }
   #clock .date { font-size: 1.6vw; opacity: .8; margin-top: .2em; }
-
   #status {
     position: absolute; left: 50%; top: 50%;
     transform: translate(-50%, -50%);
@@ -87,7 +82,7 @@ let slideIndex = -1;
 let slideTimer = null;
 let activeEl = null;
 
-const TV_COUNT = 2;
+const TV_COUNT = 3;
 let configFile = 'config.json';
 
 function getConfigFileForTv(n) { return 'config-' + n + '.json'; }
