@@ -22,7 +22,7 @@
       "slides": [
         {
           "type": "image",
-          "src": "images/퇴근시간3.png",
+          "src": "images/회사전경드론.png",
           "duration": 15
         },
         {
@@ -32,7 +32,7 @@
         },
         {
           "type": "image",
-          "src": "images/퇴근시간5.jpeg",
+          "src": "images/나불육상태양광.png",
           "duration": 15
         },
         {
@@ -42,7 +42,23 @@
         },
         {
           "type": "image",
-          "src": "images/퇴근시간2.png",
+          "src": "images/납품현장분포.png",
+          "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/퇴근시간3.png",
+          "duration": 15
+        }
+      ]
+    },
+    {
+      "name": "퇴근이후",
+      "start": "18:00",
+      "end": "09:00",
+      "slides": [
+        {
+          "type": "black",
           "duration": 15
         }
       ]
