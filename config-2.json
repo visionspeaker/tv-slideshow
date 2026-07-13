@@ -10,13 +10,31 @@
   "schedules": [
     {
       "name": "평일 업무시간",
-      "days": [1, 2, 3, 4, 5],
+      "days": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
       "start": "07:00",
       "end": "18:00",
       "slides": [
-        { "type": "image", "src": "images/Aerial_drone_photograph_of_a_coastal_solar_farm_in-1781836516567_(1).png", "duration": 15 },
-        { "type": "image", "src": "images/Transform_only_the_land_vegetation_and_sky_into_sp-1772691659553.png", "duration": 15 },
-        { "type": "image", "src": "images/스크린샷_2026-06-16_17.45.56.png", "duration": 15 }
+        {
+          "type": "image",
+          "src": "images/Aerial_drone_photograph_of_a_coastal_solar_farm_in-1781836516567_(1).png",
+          "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/Transform_only_the_land_vegetation_and_sky_into_sp-1772691659553.png",
+          "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/A_modern_urban_sophisticated_169_horizontal_greet-1783924675823.png",
+          "duration": 15
+        }
       ]
     },
     {
@@ -25,9 +43,21 @@
       "end": "22:00",
       "dim": 0.35,
       "slides": [
-        { "type": "image", "src": "images/스크린샷_2026-06-16_17.46.10.png", "duration": 30 },
-        { "type": "image", "src": "images/스크린샷_2026-06-16_17.46.25.png", "duration": 15 },
-        { "type": "image", "src": "images/스크린샷_2026-06-16_17.46.42.png", "duration": 15 }
+        {
+          "type": "image",
+          "src": "images/A_modern_urban_sophisticated_169_horizontal_greet-1783924675823.png",
+          "duration": 30
+        },
+        {
+          "type": "image",
+          "src": "images/A_serene_and_inspiring_169_horizontal_Korean_comm-1783924670652.png",
+          "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/Aerial_drone_photograph_of_a_coastal_solar_farm_in-1781836516567_(1).png",
+          "duration": 15
+        }
       ]
     },
     {
@@ -35,13 +65,20 @@
       "start": "22:00",
       "end": "07:00",
       "slides": [
-        { "type": "black", "duration": 600 }
+        {
+          "type": "black",
+          "duration": 600
+        }
       ]
     }
   ],
   "default": {
     "slides": [
-      { "type": "image", "src": "sample1.svg", "duration": 20 }
+      {
+        "type": "image",
+        "src": "sample1.svg",
+        "duration": 20
+      }
     ]
   }
 }
