@@ -10,18 +10,41 @@
   "schedules": [
     {
       "name": "평일 업무시간",
-      "days": [1, 2, 3, 4, 5],
+      "days": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
       "start": "07:00",
       "end": "18:00",
       "slides": [
-        { "type": "image", "src": "sample1.svg", "duration": 15 },
-        { "type": "image", "src": "sample2.svg", "duration": 15 }
+        {
+          "type": "image",
+          "src": "images/스크린샷_2026-07-08_165644.png",
+          "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/Aerial_drone_photograph_of_a_coastal_solar_farm_in-1781836516567_(1).png",
+          "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/Transform_only_the_land_vegetation_and_sky_into_sp-1772691659553.png",
+          "duration": 15
+        }
       ]
     }
   ],
   "default": {
     "slides": [
-      { "type": "image", "src": "sample1.svg", "duration": 20 }
+      {
+        "type": "image",
+        "src": "sample1.svg",
+        "duration": 20
+      }
     ]
   }
 }
