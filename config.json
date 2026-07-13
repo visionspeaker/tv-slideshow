@@ -22,12 +22,17 @@
       "slides": [
         {
           "type": "image",
-          "src": "sample1.svg",
+          "src": "images/스크린샷_2026-07-09_15.37.06.png",
           "duration": 15
         },
         {
           "type": "image",
-          "src": "sample2.svg",
+          "src": "images/스크린샷_2026-07-09_15.55.48.png",
+          "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/홈페이지조직도수정.png",
           "duration": 15
         }
       ]
@@ -40,8 +45,18 @@
       "slides": [
         {
           "type": "image",
-          "src": "sample1.svg",
+          "src": "images/스크린샷_2026-07-09_15.37.06.png",
           "duration": 30
+        },
+        {
+          "type": "image",
+          "src": "images/스크린샷_2026-07-09_15.55.48.png",
+          "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/홈페이지조직도수정.png",
+          "duration": 15
         }
       ]
     },
