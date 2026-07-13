@@ -58,6 +58,7 @@
   .imgs img { width:100%; aspect-ratio:16/9; object-fit:cover; display:block; }
   .imgs .name { font-size:10px; padding:4px 6px; background:#fff; word-break:break-all; }
   .imgs .del { position:absolute; top:4px; right:4px; }
+  .imgs .rename { position:absolute; top:4px; right:34px; background:#fff; }
 
   .savebar { position:fixed; left:0; right:0; bottom:0; background:#fff; border-top:1px solid var(--line);
     padding:12px 16px; display:flex; gap:10px; justify-content:center; z-index:10; }
@@ -155,16 +156,20 @@
   <button class="btn-navy" onclick="saveConfig()">💾 TV에 반영하기</button>
   <span id="saveMsg"></span>
 </div>
-
 <script>
 const enc = new TextEncoder();
 const dec = new TextDecoder();
+
 async function deriveKey(password, salt) {
   const base = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
-  return crypto.subtle.deriveKey({ name: 'PBKDF2', salt, iterations: 150000, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+  return crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt, iterations: 150000, hash: 'SHA-256' },
+    base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']
+  );
 }
 function b64(buf) { return btoa(String.fromCharCode(...new Uint8Array(buf))); }
 function unb64(str) { return Uint8Array.from(atob(str), c => c.charCodeAt(0)); }
+
 async function encryptToken(token, password) {
   const salt = crypto.getRandomValues(new Uint8Array(16));
   const iv = crypto.getRandomValues(new Uint8Array(12));
@@ -174,9 +179,12 @@ async function encryptToken(token, password) {
 }
 async function decryptToken(payload, password) {
   const key = await deriveKey(password, unb64(payload.salt));
-  const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: unb64(payload.iv) }, key, unb64(payload.ct));
+  const pt = await crypto.subtle.decrypt(
+    { name: 'AES-GCM', iv: unb64(payload.iv) }, key, unb64(payload.ct)
+  );
   return dec.decode(pt);
 }
+
 async function generateConfig() {
   const owner = document.getElementById('setOwner').value.trim();
   const repo = document.getElementById('setRepo').value.trim();
@@ -184,7 +192,7 @@ async function generateConfig() {
   const pw = document.getElementById('setPw').value;
   const msg = document.getElementById('setupMsg');
   if (!token || !pw) { msg.className='msg err'; msg.textContent='토큰과 비밀번호를 모두 입력하세요'; return; }
-  if (pw.length < 6) { msg.className='msg err'; msg.textContent='비밀번호는 6자 이상을 권장합니다'; return; }
+  if (pw.length < 6) { msg.className='msg err'; msg.textContent='비밀번호는 6자 이상 권장합니다'; return; }
   msg.className='msg'; msg.textContent='암호화 중…';
   try {
     const encrypted = await encryptToken(token, pw);
@@ -192,32 +200,41 @@ async function generateConfig() {
     document.getElementById('configOut').value = JSON.stringify(config, null, 2);
     document.getElementById('setupResult').classList.remove('hidden');
     try {
-      await putFile(owner, repo, token, 'admin-config.json', JSON.stringify(config, null, 2), '공유용 암호화 설정 저장');
+      await putFile(owner, repo, token, 'admin-config.json', JSON.stringify(config, null, 2), '공윩용 암호화 설정 저장');
       msg.className='msg ok';
-      msg.textContent='✓ 저장 완료! 이제 직원들이 공용 비밀번호로 접속할 수 있습니다.';
+      msg.textContent='✓ 저장 완료! 이됐 직원들이 공용 비밀번호로 접속할 수 있습니다.';
     } catch (e) {
       msg.className='msg err';
-      msg.textContent='암호문은 생성됐지만 자동 저장 실패: ' + e.message + ' — 아래 내용을 직접 저장하세요.';
+      msg.textContent='안호문은 생성됐지만 자동 저장 실패: ' + e.message + ' — 아래 내용을 직접 저장하세요.';
     }
-  } catch (e) { msg.className='msg err'; msg.textContent='✗ ' + e.message; }
+  } catch (e) {
+    msg.className='msg err'; msg.textContent='✗ ' + e.message;
+  }
 }
+
 async function putFile(owner, repo, token, path, content, message) {
   let sha;
   try {
-    const g = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}?t=${Date.now()}`, { headers: { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json' } });
+    const g = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}?t=${Date.now()}`,
+      { headers: { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json' } });
     if (g.ok) sha = (await g.json()).sha;
   } catch {}
   const body = { message, content: btoa(unescape(encodeURIComponent(content))) };
   if (sha) body.sha = sha;
-  const r = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, { method: 'PUT', headers: { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  const r = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+    method: 'PUT', headers: { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
   if (!r.ok) throw new Error('저장 실패 (' + r.status + ')');
   return r.json();
 }
+
 let owner='', repo='', token='';
 let config = null, configSha = null;
 let imageList = [];
 let currentTv = '1';
 let configFile = 'config-1.json';
+
 async function unlock() {
   const pw = document.getElementById('lockPw').value;
   const msg = document.getElementById('lockMsg');
@@ -242,7 +259,9 @@ async function unlock() {
     msg.textContent = (e.name === 'OperationError' || /decrypt|operation/i.test(e.message)) ? '✗ 비밀번호가 틀렸습니다' : '✗ ' + e.message;
   }
 }
+
 document.getElementById('lockPw').addEventListener('keydown', e => { if (e.key === 'Enter') unlock(); });
+
 async function loadTvConfig() {
   try {
     const f = await ghGet(configFile);
@@ -257,6 +276,7 @@ async function loadTvConfig() {
     configSha = null;
   }
 }
+
 async function switchTv() {
   const sel = document.getElementById('tvSelect');
   const newTv = sel.value;
@@ -269,9 +289,14 @@ async function switchTv() {
     await loadTvConfig();
     renderOptions(); renderSchedules(); loadImages();
     saveMsg.className = 'msg ok'; saveMsg.textContent = '✓ ' + currentTv + '번 TV 편집 중';
-  } catch (e) { saveMsg.className = 'msg err'; saveMsg.textContent = '✗ ' + e.message; }
+  } catch (e) {
+    saveMsg.className = 'msg err'; saveMsg.textContent = '✗ ' + e.message;
+  }
 }
-function headers() { return { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json' }; }
+
+function headers() {
+  return { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json' };
+}
 async function ghGet(path) {
   const r = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}?t=${Date.now()}`, { headers: headers() });
   if (!r.ok) throw new Error(path + ' 조회 실패 (' + r.status + ')');
@@ -280,16 +305,22 @@ async function ghGet(path) {
 async function ghPut(path, base64, message, sha) {
   const body = { message, content: base64 };
   if (sha) body.sha = sha;
-  const r = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, { method: 'PUT', headers: { ...headers(), 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  const r = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+    method: 'PUT', headers: { ...headers(), 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+  });
   if (!r.ok) throw new Error(path + ' 저장 실패 (' + r.status + ')');
   return r.json();
 }
 async function ghDelete(path, sha, message) {
-  const r = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, { method: 'DELETE', headers: { ...headers(), 'Content-Type': 'application/json' }, body: JSON.stringify({ message, sha }) });
+  const r = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+    method: 'DELETE', headers: { ...headers(), 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message, sha })
+  });
   if (!r.ok) throw new Error('삭제 실패 (' + r.status + ')');
 }
 function toB64(str) { return btoa(unescape(encodeURIComponent(str))); }
 function fromB64(b64) { return decodeURIComponent(escape(atob(b64.replace(/\n/g, '')))); }
+
 async function loadImages() {
   const grid = document.getElementById('imgGrid');
   grid.innerHTML = '<span class="hint">불러오는 중…</span>';
@@ -300,6 +331,7 @@ async function loadImages() {
       <div class="item">
         <img src="${f.url}" loading="lazy">
         <button class="btn-red btn-sm del" onclick="deleteImage(${i})">✕</button>
+        <button class="btn-line btn-sm rename" onclick="renameImage(${i})" title="이름 변경">✎</button>
         <div class="name">${f.name}</div>
       </div>`).join('') || '<span class="hint">이미지가 없습니다</span>';
     renderSchedules();
@@ -308,6 +340,7 @@ async function loadImages() {
     imageList = [];
   }
 }
+
 async function uploadImages() {
   const files = document.getElementById('fileInput').files;
   const msg = document.getElementById('imgMsg');
@@ -317,19 +350,98 @@ async function uploadImages() {
     const file = files[i];
     msg.textContent = `업로드 중 (${i + 1}/${files.length}) ${file.name}…`;
     const safeName = file.name.replace(/\s+/g, '_');
-    const b64d = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result.split(',')[1]); r.onerror = rej; r.readAsDataURL(file); });
+    const b64 = await new Promise((res, rej) => {
+      const r = new FileReader();
+      r.onload = () => res(r.result.split(',')[1]);
+      r.onerror = rej;
+      r.readAsDataURL(file);
+    });
     const existing = imageList.find(f => f.name === safeName);
-    await ghPut('images/' + safeName, b64d, '이미지 업로드: ' + safeName, existing ? existing.sha : undefined);
+    await ghPut('images/' + safeName, b64, '이미지 업로드: ' + safeName, existing ? existing.sha : undefined);
   }
   msg.className = 'msg ok'; msg.textContent = '✓ 업로드 완료';
   document.getElementById('fileInput').value = '';
   loadImages();
 }
+
 async function deleteImage(i) {
   const f = imageList[i];
   if (!confirm(f.name + ' 을(를) 삭제할까요?')) return;
-  try { await ghDelete('images/' + f.name, f.sha, '이미지 삭제: ' + f.name); loadImages(); } catch (e) { alert(e.message); }
+  try {
+    await ghDelete('images/' + f.name, f.sha, '이미지 삭제: ' + f.name);
+    loadImages();
+  } catch (e) { alert(e.message); }
 }
+
+async function renameImage(i) {
+  const f = imageList[i];
+  const oldName = f.name;
+  const dot = oldName.lastIndexOf('.');
+  const ext = dot >= 0 ? oldName.slice(dot) : '';
+  const baseOld = dot >= 0 ? oldName.slice(0, dot) : oldName;
+
+  let input = prompt('새 이름을 입력하세요 (확장자 ' + ext + ' 는 자동 유지)', baseOld);
+  if (input === null) return;
+  input = input.trim().replace(/\s+/g, '_');
+  if (!input) { alert('이름이 비어있습니다'); return; }
+  let newName = /\.[a-zA-Z0-9]+$/.test(input) ? input : input + ext;
+  if (newName === oldName) return;
+  if (/[\\/:"'<>|?*\s]/.test(newName.replace(ext, ''))) {
+    alert('이름에 사용할 수 없는 문자가 있습니다 (\\ / : " \' < > | ? * 공백)');
+    return;
+  }
+  if (imageList.some(x => x.name === newName)) {
+    alert('같은 이름의 이미지가 이미 있습니다: ' + newName);
+    return;
+  }
+
+  const msg = document.getElementById('imgMsg');
+  const oldPath = 'images/' + oldName;
+  const newPath = 'images/' + newName;
+  try {
+    msg.className = 'msg'; msg.textContent = '이름 변경 중… (1/3) 이미지 복사';
+    const binResp = await fetch(f.url + '?t=' + Date.now(), { cache: 'no-store' });
+    if (!binResp.ok) throw new Error('월본 이미지 다운로드 실패 (' + binResp.status + ')');
+    const buf = await binResp.arrayBuffer();
+    let bin = '';
+    const bytes = new Uint8Array(buf);
+    for (let k = 0; k < bytes.length; k++) bin += String.fromCharCode(bytes[k]);
+    const b64 = btoa(bin);
+    await ghPut(newPath, b64, `이미지 이름 변경: ${oldName} → ${newName}`);
+
+    msg.textContent = '이름 변경 중… (2/3) 스케줄 경로 갱신';
+    const updatedTvs = [];
+    for (const tv of ['1', '2', '3']) {
+      const cf = 'config-' + tv + '.json';
+      let data;
+      try { data = await ghGet(cf); } catch (e) { continue; }
+      let text = fromB64(data.content);
+      if (text.includes(oldPath)) {
+        const replaced = text.split('"' + oldPath + '"').join('"' + newPath + '"');
+        await ghPut(cf, toB64(replaced), `${tv}번 TV: 이미지 경로 갱신 (${newName})`, data.sha);
+        updatedTvs.push(tv);
+        if (tv === currentTv) {
+          config = JSON.parse(replaced);
+          const nf = await ghGet(cf); configSha = nf.sha;
+        }
+      }
+    }
+
+    msg.textContent = '이름 변경 중… (3/3) 옛 파일 정리';
+    const cur = await ghGet(oldPath);
+    await ghDelete(oldPath, cur.sha, '이미지 이름 변경 후 옛 파일 삭제: ' + oldName);
+
+    msg.className = 'msg ok';
+    msg.textContent = `✓ 이름 변경 완료: ${newName}` +
+      (updatedTvs.length ? ` (사용 중이던 ${updatedTvs.join(', ')}번 TV 경로도 갱신)` : '');
+    await loadImages();
+    renderSchedules();
+  } catch (e) {
+    msg.className = 'msg err';
+    msg.textContent = '✗ 이름 변경 실패: ' + e.message + ' — 다시 시도하거나 새로고침하세요';
+  }
+}
+
 function renderOptions() {
   document.getElementById('optDur').value = config.defaultDuration || 15;
   document.getElementById('optFit').value = config.fit || 'contain';
@@ -342,7 +454,9 @@ function readOptions() {
   config.clock = document.getElementById('optClock').value === 'true';
   config.pixelShift = document.getElementById('optShift').value === 'true';
 }
+
 const DAY_NAMES = ['일','월','화','수','목','금','토'];
+
 function renderSchedules() {
   if (!config) return;
   const wrap = document.getElementById('schedList');
@@ -368,9 +482,15 @@ function renderSchedules() {
     wrap.appendChild(div);
   });
 }
+
 function slideRow(si, li, sl) {
-  const imgOpts = imageList.map(f => `<option value="images/${f.name}" ${sl.src === 'images/' + f.name ? 'selected' : ''}>${f.name}</option>`).join('');
-  const srcField = sl.type === 'image' ? `<select class="src slSrc" data-si="${si}" data-li="${li}"><option value="">이미지 선택…</option>${imgOpts}</select>` : sl.type === 'url' ? `<input type="text" class="src slSrc" data-si="${si}" data-li="${li}" value="${sl.src || ''}" placeholder="주소 또는 파일명.html">` : `<span class="src hint">검은 화면 (절전)</span>`;
+  const imgOpts = imageList.map(f =>
+    `<option value="images/${f.name}" ${sl.src === 'images/' + f.name ? 'selected' : ''}>${f.name}</option>`).join('');
+  const srcField = sl.type === 'image'
+    ? `<select class="src slSrc" data-si="${si}" data-li="${li}"><option value="">이미지 선택…</option>${imgOpts}</select>`
+    : sl.type === 'url'
+      ? `<input type="text" class="src slSrc" data-si="${si}" data-li="${li}" value="${sl.src || ''}" placeholder="주소 또는 파일명.html">`
+      : `<span class="src hint">검은 화면 (절전)</span>`;
   return `
     <div class="slide-row">
       <select class="slType" data-si="${si}" data-li="${li}" onchange="changeType(${si},${li},this.value)">
@@ -386,36 +506,91 @@ function slideRow(si, li, sl) {
       <button class="btn-red btn-sm" onclick="removeSlide(${si},${li})">✕</button>
     </div>`;
 }
+
 function readSchedulesFromUI() {
   document.querySelectorAll('.scName').forEach(el => config.schedules[el.dataset.si].name = el.value);
   document.querySelectorAll('.scStart').forEach(el => config.schedules[el.dataset.si].start = el.value);
   document.querySelectorAll('.scEnd').forEach(el => config.schedules[el.dataset.si].end = el.value);
-  document.querySelectorAll('.scDim').forEach(el => { const v = Number(el.value); if (v > 0) config.schedules[el.dataset.si].dim = v; else delete config.schedules[el.dataset.si].dim; });
-  config.schedules.forEach((sc, si) => { const checked = [...document.querySelectorAll(`.dayChk[data-si="${si}"]`)].filter(c => c.checked).map(c => Number(c.dataset.day)); if (checked.length === 7) delete sc.days; else sc.days = checked; });
+  document.querySelectorAll('.scDim').forEach(el => {
+    const v = Number(el.value);
+    if (v > 0) config.schedules[el.dataset.si].dim = v; else delete config.schedules[el.dataset.si].dim;
+  });
+  config.schedules.forEach((sc, si) => {
+    const checked = [...document.querySelectorAll(`.dayChk[data-si="${si}"]`)]
+      .filter(c => c.checked).map(c => Number(c.dataset.day));
+    if (checked.length === 7) delete sc.days; else sc.days = checked;
+  });
   document.querySelectorAll('.slSrc').forEach(el => config.schedules[el.dataset.si].slides[el.dataset.li].src = el.value);
   document.querySelectorAll('.slDur').forEach(el => config.schedules[el.dataset.si].slides[el.dataset.li].duration = Number(el.value) || 15);
 }
-function addSchedule() { readSchedulesFromUI(); config.schedules = config.schedules || []; config.schedules.push({ name: '새 시간대', start: '07:00', end: '18:00', slides: [] }); renderSchedules(); }
-function removeSchedule(si) { if (!confirm('이 시간대를 삭제할까요?')) return; readSchedulesFromUI(); config.schedules.splice(si, 1); renderSchedules(); }
-function addSlide(si) { readSchedulesFromUI(); config.schedules[si].slides.push({ type: 'image', src: '', duration: 15 }); renderSchedules(); }
-function removeSlide(si, li) { readSchedulesFromUI(); config.schedules[si].slides.splice(li, 1); renderSchedules(); }
-function moveSlide(si, li, d) { readSchedulesFromUI(); const arr = config.schedules[si].slides; const ni = li + d; if (ni < 0 || ni >= arr.length) return; [arr[li], arr[ni]] = [arr[ni], arr[li]]; renderSchedules(); }
-function changeType(si, li, type) { readSchedulesFromUI(); const sl = config.schedules[si].slides[li]; sl.type = type; if (type === 'black') delete sl.src; else sl.src = ''; renderSchedules(); }
+
+function addSchedule() {
+  readSchedulesFromUI();
+  config.schedules = config.schedules || [];
+  config.schedules.push({ name: '새 시간대', start: '07:00', end: '18:00', slides: [] });
+  renderSchedules();
+}
+function removeSchedule(si) {
+  if (!confirm('이 시간대를 삭제할까요?')) return;
+  readSchedulesFromUI();
+  config.schedules.splice(si, 1);
+  renderSchedules();
+}
+function addSlide(si) {
+  readSchedulesFromUI();
+  config.schedules[si].slides.push({ type: 'image', src: '', duration: 15 });
+  renderSchedules();
+}
+function removeSlide(si, li) {
+  readSchedulesFromUI();
+  config.schedules[si].slides.splice(li, 1);
+  renderSchedules();
+}
+function moveSlide(si, li, d) {
+  readSchedulesFromUI();
+  const arr = config.schedules[si].slides;
+  const ni = li + d;
+  if (ni < 0 || ni >= arr.length) return;
+  [arr[li], arr[ni]] = [arr[ni], arr[li]];
+  renderSchedules();
+}
+function changeType(si, li, type) {
+  readSchedulesFromUI();
+  const sl = config.schedules[si].slides[li];
+  sl.type = type;
+  if (type === 'black') delete sl.src; else sl.src = '';
+  renderSchedules();
+}
+
 async function saveConfig() {
   const msg = document.getElementById('saveMsg');
   try {
     readOptions();
     readSchedulesFromUI();
-    for (const sc of config.schedules || []) { for (const sl of sc.slides || []) { if (sl.type !== 'black' && !sl.src) { msg.className = 'msg err'; msg.textContent = '✗ 이미지/주소가 비어있는 슬라이드가 있습니다'; return; } } }
+    for (const sc of config.schedules || []) {
+      for (const sl of sc.slides || []) {
+        if (sl.type !== 'black' && !sl.src) {
+          msg.className = 'msg err'; msg.textContent = '✗ 이미지/주소가 비어있는 슬라이드가 있습니다';
+          return;
+        }
+      }
+    }
     msg.className = 'msg'; msg.textContent = '저장 중…';
-    const res = await ghPut(configFile, toB64(JSON.stringify(config, null, 2)), currentTv + '번 TV 스케줄 수정', configSha);
+    const res = await ghPut(configFile, toB64(JSON.stringify(config, null, 2)),
+      currentTv + '번 TV 스케줄 수정', configSha);
     configSha = res.content.sha;
     msg.className = 'msg ok'; msg.textContent = '✓ ' + currentTv + '번 TV 저장 완료 — 해당 TV에 10~15분 내 반영됩니다';
-  } catch (e) { msg.className = 'msg err'; msg.textContent = '✗ ' + e.message; }
+  } catch (e) {
+    msg.className = 'msg err'; msg.textContent = '✗ ' + e.message;
+  }
 }
+
 window.addEventListener('load', () => {
   const savedPw = sessionStorage.getItem('tv_unlocked_pw');
-  if (savedPw) { document.getElementById('lockPw').value = savedPw; unlock(); }
+  if (savedPw) {
+    document.getElementById('lockPw').value = savedPw;
+    unlock();
+  }
 });
 </script>
 </body>
