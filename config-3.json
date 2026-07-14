@@ -17,8 +17,8 @@
         4,
         5
       ],
-      "start": "07:00",
-      "end": "17:50",
+      "start": "08:30",
+      "end": "17:30",
       "slides": [
         {
           "type": "image",
@@ -61,6 +61,45 @@
           "type": "black",
           "duration": 15
         }
+      ]
+    },
+    {
+      "name": "퇴근시간",
+      "start": "17:30",
+      "end": "18:00",
+      "slides": [
+        {
+          "type": "image",
+          "src": "images/퇴근시간1.png",
+          "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/퇴근시간2.png",
+          "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/퇴근시간3.png",
+          "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/퇴근시간4.jpeg",
+          "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/퇴근시간5.jpeg",
+          "duration": 15
+        }
+      ],
+      "days": [
+        1,
+        2,
+        3,
+        4,
+        5
       ]
     }
   ],
