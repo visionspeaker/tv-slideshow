@@ -22,42 +22,12 @@
       "slides": [
         {
           "type": "image",
-          "src": "images/나불육상태양광.png",
+          "src": "images/화창초등학교_공장검수_1.png",
           "duration": 15
         },
         {
           "type": "image",
-          "src": "images/수상태양광.png",
-          "duration": 15
-        },
-        {
-          "type": "image",
-          "src": "images/연도별납품실적.png",
-          "duration": 15
-        },
-        {
-          "type": "image",
-          "src": "images/납품현장분포.png",
-          "duration": 15
-        },
-        {
-          "type": "image",
-          "src": "images/지역별실적.png",
-          "duration": 15
-        },
-        {
-          "type": "image",
-          "src": "images/발주처비중.png",
-          "duration": 15
-        },
-        {
-          "type": "image",
-          "src": "images/안전보건방침목표.png",
-          "duration": 15
-        },
-        {
-          "type": "image",
-          "src": "images/회사전경드론.png",
+          "src": "images/화창초등학교_공장검수_2.png",
           "duration": 15
         }
       ]
