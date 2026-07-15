@@ -113,6 +113,7 @@
       <option value="3">3번 TV (크롬캐스트)</option>
     </select>
     <div class="status" id="connStatus"></div>
+    <button onclick="logout()" style="background:rgba(255,255,255,.15);color:#fff;border:0;border-radius:6px;padding:6px 10px;font-size:12px;cursor:pointer;font-family:inherit;">로그아웃</button>
   </div>
 </header>
 <main class="hidden" id="appMain">
@@ -200,12 +201,12 @@ async function generateConfig() {
     document.getElementById('configOut').value = JSON.stringify(config, null, 2);
     document.getElementById('setupResult').classList.remove('hidden');
     try {
-      await putFile(owner, repo, token, 'admin-config.json', JSON.stringify(config, null, 2), '공윩용 암호화 설정 저장');
+      await putFile(owner, repo, token, 'admin-config.json', JSON.stringify(config, null, 2), '공용 암호화 설정 저장');
       msg.className='msg ok';
-      msg.textContent='✓ 저장 완료! 이됐 직원들이 공용 비밀번호로 접속할 수 있습니다.';
+      msg.textContent='✓ 저장 완료! 이제 직원들이 공용 비밀번호로 접속할 수 있습니다.';
     } catch (e) {
       msg.className='msg err';
-      msg.textContent='안호문은 생성됐지만 자동 저장 실패: ' + e.message + ' — 아래 내용을 직접 저장하세요.';
+      msg.textContent='암호문은 생성됐지만 자동 저장 실패: ' + e.message + ' — 아래 내용을 직접 저장하세요.';
     }
   } catch (e) {
     msg.className='msg err'; msg.textContent='✗ ' + e.message;
@@ -253,11 +254,17 @@ async function unlock() {
     ['appHeader','appMain','saveBar'].forEach(id => document.getElementById(id).classList.remove('hidden'));
     document.getElementById('connStatus').textContent = owner + '/' + repo;
     renderOptions(); renderSchedules(); loadImages();
-    sessionStorage.setItem('tv_unlocked_pw', pw);
+    localStorage.setItem('tv_unlocked_pw', pw);
   } catch (e) {
     msg.className='msg err'; msg.style.color='var(--red)';
     msg.textContent = (e.name === 'OperationError' || /decrypt|operation/i.test(e.message)) ? '✗ 비밀번호가 틀렸습니다' : '✗ ' + e.message;
   }
+}
+
+function logout() {
+  localStorage.removeItem('tv_unlocked_pw');
+  sessionStorage.removeItem('tv_unlocked_pw');
+  location.reload();
 }
 
 document.getElementById('lockPw').addEventListener('keydown', e => { if (e.key === 'Enter') unlock(); });
@@ -401,7 +408,7 @@ async function renameImage(i) {
   try {
     msg.className = 'msg'; msg.textContent = '이름 변경 중… (1/3) 이미지 복사';
     const binResp = await fetch(f.url + '?t=' + Date.now(), { cache: 'no-store' });
-    if (!binResp.ok) throw new Error('월본 이미지 다운로드 실패 (' + binResp.status + ')');
+    if (!binResp.ok) throw new Error('원본 이미지 다운로드 실패 (' + binResp.status + ')');
     const buf = await binResp.arrayBuffer();
     let bin = '';
     const bytes = new Uint8Array(buf);
@@ -586,7 +593,7 @@ async function saveConfig() {
 }
 
 window.addEventListener('load', () => {
-  const savedPw = sessionStorage.getItem('tv_unlocked_pw');
+  const savedPw = localStorage.getItem('tv_unlocked_pw') || sessionStorage.getItem('tv_unlocked_pw');
   if (savedPw) {
     document.getElementById('lockPw').value = savedPw;
     unlock();
