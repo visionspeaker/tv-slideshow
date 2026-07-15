@@ -32,26 +32,6 @@
         },
         {
           "type": "image",
-          "src": "images/납품현장분포.png",
-          "duration": 15
-        },
-        {
-          "type": "image",
-          "src": "images/발주처비중.png",
-          "duration": 15
-        },
-        {
-          "type": "image",
-          "src": "images/연도별납품실적.png",
-          "duration": 15
-        },
-        {
-          "type": "image",
-          "src": "images/지역별실적.png",
-          "duration": 15
-        },
-        {
-          "type": "image",
           "src": "images/회사전경드론.png",
           "duration": 15
         }
