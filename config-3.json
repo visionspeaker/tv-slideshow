@@ -32,17 +32,7 @@
         },
         {
           "type": "image",
-          "src": "images/발주처비중.png",
-          "duration": 15
-        },
-        {
-          "type": "image",
           "src": "images/수상태양광.png",
-          "duration": 15
-        },
-        {
-          "type": "image",
-          "src": "images/안전보건방침목표.png",
           "duration": 15
         },
         {
