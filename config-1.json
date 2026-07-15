@@ -29,6 +29,21 @@
           "type": "image",
           "src": "images/화창초등학교_공장검수_2.png",
           "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/나불육상태양광.png",
+          "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/수상태양광.png",
+          "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/회사전경드론.png",
+          "duration": 15
         }
       ]
     },
