@@ -22,32 +22,12 @@
       "slides": [
         {
           "type": "image",
-          "src": "images/나불육상태양광.png",
+          "src": "images/리진인베스트1.png",
           "duration": 15
         },
         {
           "type": "image",
-          "src": "images/납품현장분포.png",
-          "duration": 15
-        },
-        {
-          "type": "image",
-          "src": "images/회사전경드론.png",
-          "duration": 15
-        },
-        {
-          "type": "image",
-          "src": "images/수상태양광.png",
-          "duration": 15
-        },
-        {
-          "type": "image",
-          "src": "images/발주처비중.png",
-          "duration": 15
-        },
-        {
-          "type": "image",
-          "src": "images/안전보건방침목표.png",
+          "src": "images/리진인베스트2.png",
           "duration": 15
         }
       ]
