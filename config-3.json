@@ -15,18 +15,15 @@
       "end": "17:30",
       "slides": [
         {
-          "type": "image",
-          "src": "images/나불육상태양광.png",
+          "type": "black",
           "duration": 15
         },
         {
-          "type": "image",
-          "src": "images/수상태양광.png",
+          "type": "black",
           "duration": 15
         },
         {
-          "type": "image",
-          "src": "images/회사전경드론.png",
+          "type": "black",
           "duration": 15
         }
       ]
