@@ -10,20 +10,33 @@
   "schedules": [
     {
       "name": "평일 업무시간",
-      "days": [],
+      "days": [
+        1,
+        2,
+        3,
+        4
+      ],
       "start": "08:30",
       "end": "17:30",
       "slides": [
         {
-          "type": "black",
-          "duration": 15
+          "type": "image",
+          "duration": 15,
+          "src": "images/나불육상태양광.png"
         },
         {
-          "type": "black",
-          "duration": 15
+          "type": "image",
+          "duration": 15,
+          "src": "images/수상태양광.png"
         },
         {
-          "type": "black",
+          "type": "image",
+          "duration": 15,
+          "src": "images/발주처비중.png"
+        },
+        {
+          "type": "image",
+          "src": "images/납품현장분포.png",
           "duration": 15
         }
       ]
@@ -93,7 +106,8 @@
           "src": "https://visionspeaker.github.io/hyele-admin/",
           "duration": 15
         }
-      ]
+      ],
+      "days": []
     }
   ],
   "default": {
