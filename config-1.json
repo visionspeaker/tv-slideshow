@@ -9,7 +9,7 @@
   "clock": true,
   "schedules": [
     {
-      "name": "평일 업무시간",
+      "name": "평일 업무 시간",
       "days": [
         1,
         2,
@@ -47,23 +47,13 @@
         },
         {
           "type": "image",
-          "src": "images/연도별납품실적.png",
-          "duration": 15
-        },
-        {
-          "type": "image",
           "src": "images/안전보건방침목표.png",
-          "duration": 15
-        },
-        {
-          "type": "image",
-          "src": "images/지역별실적.png",
           "duration": 15
         }
       ]
     },
     {
-      "name": "저녁 시간",
+      "name": "평일 퇴근 시간",
       "start": "17:30",
       "end": "22:00",
       "dim": 0.35,
@@ -93,6 +83,14 @@
           "src": "images/퇴근시간5.jpeg",
           "duration": 15
         }
+      ],
+      "days": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
       ]
     },
     {
@@ -104,6 +102,54 @@
           "type": "black",
           "duration": 600
         }
+      ]
+    },
+    {
+      "name": "휴일",
+      "start": "07:00",
+      "end": "22:00",
+      "slides": [
+        {
+          "type": "black",
+          "duration": 100
+        },
+        {
+          "type": "black",
+          "duration": 100
+        }
+      ],
+      "days": [
+        0
+      ]
+    },
+    {
+      "name": "토요일",
+      "start": "07:00",
+      "end": "17:30",
+      "slides": [
+        {
+          "type": "image",
+          "src": "images/나불육상태양광.png",
+          "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/수상태양광.png",
+          "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/회사전경드론.png",
+          "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/안전보건방침목표.png",
+          "duration": 15
+        }
+      ],
+      "days": [
+        6
       ]
     }
   ],
