@@ -10,13 +10,7 @@
   "schedules": [
     {
       "name": "평일 업무시간",
-      "days": [
-        1,
-        2,
-        3,
-        4,
-        5
-      ],
+      "days": [],
       "start": "08:30",
       "end": "17:30",
       "slides": [
@@ -85,6 +79,23 @@
         3,
         4,
         5
+      ]
+    },
+    {
+      "name": "새 시간대",
+      "start": "09:50",
+      "end": "18:00",
+      "slides": [
+        {
+          "type": "url",
+          "src": "https://vision153.notion.site/76af3de4a3ed43e6a5b785fb42ed6c4c?source=copy_link",
+          "duration": 15
+        },
+        {
+          "type": "url",
+          "src": "https://visionspeaker.github.io/hyele-app/",
+          "duration": 15
+        }
       ]
     }
   ],
