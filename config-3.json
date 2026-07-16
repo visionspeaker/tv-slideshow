@@ -84,10 +84,6 @@
       "end": "18:00",
       "slides": [
         {
-          "type": "black",
-          "duration": 15
-        },
-        {
           "type": "url",
           "src": "https://visionspeaker.github.io/hyele-app/",
           "duration": 15
