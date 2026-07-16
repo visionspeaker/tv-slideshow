@@ -84,8 +84,7 @@
       "end": "18:00",
       "slides": [
         {
-          "type": "url",
-          "src": "https://vision153.notion.site/76af3de4a3ed43e6a5b785fb42ed6c4c",
+          "type": "black",
           "duration": 15
         },
         {
