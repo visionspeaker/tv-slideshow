@@ -38,6 +38,11 @@
           "type": "image",
           "src": "images/납품현장분포.png",
           "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/누적실적.png",
+          "duration": 15
         }
       ]
     },
