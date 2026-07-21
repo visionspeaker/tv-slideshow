@@ -44,6 +44,11 @@
           "type": "image",
           "src": "images/나불육상태양광.png",
           "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/누적실적.png",
+          "duration": 15
         }
       ]
     },
