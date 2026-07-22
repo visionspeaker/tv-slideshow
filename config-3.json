@@ -17,7 +17,7 @@
         4
       ],
       "start": "08:50",
-      "end": "17:30",
+      "end": "11:40",
       "slides": [
         {
           "type": "image",
@@ -117,11 +117,11 @@
     {
       "name": "점심식사",
       "start": "11:40",
-      "end": "13:00",
+      "end": "14:00",
       "slides": [
         {
           "type": "image",
-          "src": "images/점심식사1.png",
+          "src": "images/점심식사1.jpeg",
           "duration": 15
         },
         {
