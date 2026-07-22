@@ -113,6 +113,35 @@
         }
       ],
       "days": []
+    },
+    {
+      "name": "점심식사",
+      "start": "11:40",
+      "end": "13:00",
+      "slides": [
+        {
+          "type": "image",
+          "src": "images/점심식사1.png",
+          "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/점심식사2.png",
+          "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/점심식사3.png",
+          "duration": 15
+        }
+      ],
+      "days": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
     }
   ],
   "default": {
