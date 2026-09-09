@@ -13,6 +13,7 @@
       "days": [
         1,
         2,
+        3,
         4,
         5
       ],
@@ -209,28 +210,9 @@
       "days": [
         1,
         2,
+        3,
         4,
         5
-      ]
-    },
-    {
-      "name": "새 시간대",
-      "start": "07:00",
-      "end": "18:00",
-      "slides": [
-        {
-          "type": "image",
-          "src": "images/SK하이닉스_SHE컨설팅_1.png",
-          "duration": 15
-        },
-        {
-          "type": "image",
-          "src": "images/SK하이닉스_SHE컨설팅2.png",
-          "duration": 15
-        }
-      ],
-      "days": [
-        3
       ]
     }
   ],
