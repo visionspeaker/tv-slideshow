@@ -222,6 +222,16 @@
           "type": "image",
           "src": "images/창립48주년.png",
           "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/창립48_1.png",
+          "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/창립48_2.png",
+          "duration": 15
         }
       ],
       "days": [
