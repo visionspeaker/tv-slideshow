@@ -13,7 +13,6 @@
       "days": [
         1,
         2,
-        3,
         4,
         5
       ],
@@ -131,7 +130,6 @@
       "days": [
         1,
         2,
-        3,
         4,
         5
       ]
@@ -163,6 +161,31 @@
         3,
         4,
         5
+      ]
+    },
+    {
+      "name": "창립",
+      "start": "07:00",
+      "end": "18:00",
+      "slides": [
+        {
+          "type": "image",
+          "src": "images/창립48_1.png",
+          "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/창립48_2.png",
+          "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/창립48주년.png",
+          "duration": 15
+        }
+      ],
+      "days": [
+        3
       ]
     }
   ],
