@@ -13,7 +13,6 @@
       "days": [
         1,
         2,
-        3,
         4,
         5
       ],
@@ -210,7 +209,6 @@
       "days": [
         1,
         2,
-        3,
         4,
         5
       ]
@@ -222,21 +220,18 @@
       "slides": [
         {
           "type": "image",
-          "src": "images/창립48주년.png",
+          "src": "images/p5l_ph1_그린동_1.png",
           "duration": 15
         },
         {
           "type": "image",
-          "src": "images/창립48_1.png",
-          "duration": 15
-        },
-        {
-          "type": "image",
-          "src": "images/창립48_2.png",
+          "src": "images/p5l_ph1_그린동_2.png",
           "duration": 15
         }
       ],
-      "days": []
+      "days": [
+        3
+      ]
     }
   ],
   "default": {
