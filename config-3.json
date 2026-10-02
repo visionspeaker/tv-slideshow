@@ -93,8 +93,7 @@
         1,
         2,
         3,
-        4,
-        5
+        4
       ]
     },
     {
@@ -132,8 +131,7 @@
         1,
         2,
         3,
-        4,
-        5
+        4
       ]
     },
     {
@@ -166,27 +164,29 @@
       ]
     },
     {
-      "name": "창립",
+      "name": "테스트",
       "start": "07:00",
       "end": "18:00",
       "slides": [
         {
           "type": "image",
-          "src": "images/창립48_1.png",
+          "src": "images/위험성평가.png",
           "duration": 15
         },
         {
           "type": "image",
-          "src": "images/창립48_2.png",
+          "src": "images/안전보건방침목표.png",
           "duration": 15
         },
         {
           "type": "image",
-          "src": "images/창립48주년.png",
+          "src": "images/집중점검.png",
           "duration": 15
         }
       ],
-      "days": []
+      "days": [
+        5
+      ]
     }
   ],
   "default": {
