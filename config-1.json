@@ -211,7 +211,9 @@
           "duration": 15
         }
       ],
-      "days": []
+      "days": [
+        2
+      ]
     }
   ],
   "default": {
