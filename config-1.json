@@ -191,27 +191,28 @@
         1,
         2,
         3,
-        4,
         5
       ]
     },
     {
       "name": "새 시간대",
-      "start": "07:00",
+      "start": "13:00",
       "end": "18:00",
       "slides": [
         {
           "type": "image",
-          "src": "images/p5l_ph1_그린동_1.png",
+          "src": "images/ai_활용_ess구축1.png",
           "duration": 15
         },
         {
           "type": "image",
-          "src": "images/p5l_ph1_그린동_2.png",
+          "src": "images/ai활용_ess_구축2.png",
           "duration": 15
         }
       ],
-      "days": []
+      "days": [
+        4
+      ]
     }
   ],
   "default": {
