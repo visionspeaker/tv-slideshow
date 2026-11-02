@@ -22,17 +22,32 @@
       "slides": [
         {
           "type": "image",
-          "src": "images/안전보건방침목표.png",
+          "src": "images/납품현장분포.png",
           "duration": 15
         },
         {
           "type": "image",
-          "src": "images/집중점검.png",
+          "src": "images/누적실적.png",
           "duration": 15
         },
         {
           "type": "image",
-          "src": "images/위험성평가.png",
+          "src": "images/수상태양광.png",
+          "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/발주처비중.png",
+          "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/회사전경드론.png",
+          "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/나불육상태양광.png",
           "duration": 15
         }
       ]
@@ -173,17 +188,32 @@
       "slides": [
         {
           "type": "image",
+          "src": "images/납품현장분포.png",
+          "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/누적실적.png",
+          "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/수상태양광.png",
+          "duration": 15
+        },
+        {
+          "type": "image",
+          "src": "images/발주처비중.png",
+          "duration": 15
+        },
+        {
+          "type": "image",
           "src": "images/회사전경드론.png",
           "duration": 15
         },
         {
           "type": "image",
-          "src": "images/안전보건방침목표.png",
-          "duration": 15
-        },
-        {
-          "type": "image",
-          "src": "images/위험성평가.png",
+          "src": "images/나불육상태양광.png",
           "duration": 15
         }
       ],
